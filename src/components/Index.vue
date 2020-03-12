@@ -177,12 +177,7 @@ export default {
         // })
 
 
-        this.$axios.post("/fr/flowpool/list").then((res)=>{
-            console.log(res)
-        }).catch((res)=>{
-            console.log(res)
-        })
-        
+
         
     },
     mounted() {
