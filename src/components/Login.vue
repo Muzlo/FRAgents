@@ -5,15 +5,15 @@
       <h3 class="title">用户登录系统</h3>
 
       <el-form-item prop="userName"> 
-        <el-input prefix-icon="el-icon-user-solid" v-model="form.userName" placeholder="用户名"></el-input>
+        <el-input prefix-icon="el-icon-user-solid" v-model="form.username" placeholder="用户名"></el-input>
       </el-form-item>
 
       <el-form-item prop="userPassword">
-        <el-input type="password" prefix-icon="el-icon-lock" v-model="form.userPassword" placeholder="密码"></el-input>
+        <el-input type="password" prefix-icon="el-icon-lock" v-model="form.userpass" placeholder="密码"></el-input>
       </el-form-item>
 
       <el-form-item>
-        <el-checkbox v-model="form.checked">记住密码</el-checkbox>
+        <el-checkbox v-model="checked">记住密码</el-checkbox>
       </el-form-item>
 
       <el-form-item>
@@ -24,20 +24,21 @@
 </template>
 
 <script>
+import { baseURL } from "../common/js/ipconfig.js";
 export default {
     name:"login",
     data() {
       return {
         form: {
-          userName: '',
-          userPassword: '',
-          checked: false
+          username: '',
+          userpass: '',
         },
+        checked: false,
         rules:{
-          userName: [
+          username: [
             { required: true, message: '用户名不能为空', trigger: 'blur' }
           ],
-          userPassword: [
+          userpass: [
             { required: true, message: '密码不能为空', trigger: 'blur' }
           ]
         },
@@ -51,20 +52,23 @@ export default {
     },
     methods: {
       onSubmit(form) {
-        let userLoginInfo=JSON.stringify(this.form);
-        localStorage.setItem("userName",JSON.stringify(this.form.userName));
+        if(this.checked){
+          localStorage.setItem('userLoginInfo',JSON.stringify(this.form));
+        }
         this.$refs[form].validate((valid) => {
           if (valid) {
-            if(this.form.checked){
-              localStorage.setItem('userLoginInfo',userLoginInfo);
-            }
-            localStorage.setItem('token', 'i_am_token');//token 存储 下次登录判断token是否正确 则直接跳到index页
-            this.$router.push({ path: this.redirect || '/' }, onComplete => { }, onAbort => { })
+             this.loginFn();
           } else {
             return false;
           }
         });
       },
+      async loginFn(){
+        
+        const data=await this.$axios.post(`${baseURL.ip1}/Login/checkLogin`,this._qs.stringify(this.form) );
+        localStorage.setItem('token', data.token);
+        this.$router.push({ path: this.redirect || '/' }, onComplete => { }, onAbort => { })
+      }
     }
   }
 </script>

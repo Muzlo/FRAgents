@@ -7,7 +7,7 @@ let hasMenus = false
 router.beforeEach(async (to, from, next) => {
     document.title = getDocumentTitle(to.meta.title)
     if (localStorage.getItem('token')) {
-
+            console.log("ss")
             if (to.path === '/login') {
                 next({ path: '/' })
             } else if (hasMenus) {
@@ -138,36 +138,7 @@ router.beforeEach(async (to, from, next) => {
                         
                     ];
                     
-
-
-                    // switch (text){
-                    //     case "主页":
-                    //     item.icon="el-icon-s-home"
-                    //     break;
-                    // }
-
                     arr.forEach((item)=>{
-                        // if(item.text=='主页'){
-                        //     item.icon="el-icon-s-home"
-                        // }
-                        // if(item.text=="我的代理商"){
-                        //     item.icon="el-icon-user-solid"
-                        // }
-                        // if(item.text=="我的钱包"){
-                        //     item.icon="el-icon-s-goods"
-                        // }
-                        // if(item.text=="用户与权限"){
-                        //     item.icon="el-icon-coin"
-                        //     item.children.forEach((item2)=>{
-                        //         if(item2.name=="msg"){
-                        //             item2.hidden=true
-                        //         }
-                        //     })
-                        // }
-                        // if(item.text=="我的卡"){
-                        //     item.icon="el-icon-postcard"
-                        // }
-
                             switch (item.text){
                                 case "主页":
                                     item.icon="el-icon-s-home"

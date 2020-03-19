@@ -22,6 +22,7 @@
 import pie from "../components/home/pie.vue"
 import lineBar from "../components/home/lineBar.vue"
 import lineEchart from "../components/home/line.vue"
+import { baseURL } from "../common/js/ipconfig.js";
 export default {
   name: "home",
   data() {
@@ -62,16 +63,39 @@ export default {
 
       ],
       fileName: '',
-      fileList:[]
+      fileList:[],
+      obj:{
+        agentid:"091291EA-02F1-4708-AD10-003F9243B468"
+      }
     };
   },
   components:{
     pie,lineBar,lineEchart
   },
-  created() {},
-  mounted() {},
-  methods:{
+  created() {
+        // this.$axios.get("/fr/USIM/getMyAgent",this._qs.stringify({
+        //     agentid: '091291EA-02F1-4708-AD10-003F9243B468',
+        // })).then((res)=>{
+        //     console.log(res)
+        // }).catch((res)=>{
+        //     console.log(res)
+        // })
 
+        
+        this.$axios.post("/api/toutiao/index",this._qs.stringify({
+            type: 'top',
+            key: 'a7581c76b3593a87a427aeacc8d87443',
+        })).then((res)=>{
+            console.log(res)
+        }).catch((res)=>{
+            console.log(res)
+        })
+  },
+  mounted() {
+
+  },
+  methods:{
+ 
   }
 
 };
