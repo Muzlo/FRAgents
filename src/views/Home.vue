@@ -73,23 +73,23 @@ export default {
     pie,lineBar,lineEchart
   },
   created() {
-        // this.$axios.get("/fr/USIM/getMyAgent",this._qs.stringify({
-        //     agentid: '091291EA-02F1-4708-AD10-003F9243B468',
-        // })).then((res)=>{
-        //     console.log(res)
-        // }).catch((res)=>{
-        //     console.log(res)
-        // })
-
-        
-        this.$axios.post("/api/toutiao/index",this._qs.stringify({
-            type: 'top',
-            key: 'a7581c76b3593a87a427aeacc8d87443',
+        this.$axios.get("/fr/USIM/getMyAgent",this._qs.stringify({
+            agentid: '091291EA-02F1-4708-AD10-003F9243B468',
         })).then((res)=>{
             console.log(res)
         }).catch((res)=>{
             console.log(res)
         })
+
+        
+        // this.$axios.post("/api/toutiao/index",this._qs.stringify({
+        //     type: 'top',
+        //     key: 'a7581c76b3593a87a427aeacc8d87443',
+        // })).then((res)=>{
+        //     console.log(res)
+        // }).catch((res)=>{
+        //     console.log(res)
+        // })
   },
   mounted() {
 
