@@ -164,21 +164,7 @@ export default {
         }
     },
     created() {
-        let userLoginInfo=JSON.parse(localStorage.getItem("userLoginInfo"));
-        this.userName=JSON.parse(localStorage.getItem("userName"));
-
-        // this.$axios.post("/api/toutiao/index",this._qs.stringify({
-        //     type: 'top',
-        //     key: 'a7581c76b3593a87a427aeacc8d87443',
-        // })).then((res)=>{
-        //     console.log(res)
-        // }).catch((res)=>{
-        //     console.log(res)
-        // })
-///index.vue
-
-
-        
+        this.userName=JSON.parse(localStorage.getItem("userLoginInfo")).username
     },
     mounted() {
         // 第一个标签

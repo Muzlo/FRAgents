@@ -59,38 +59,13 @@ export default {
               list:[24, 22, 16, 18, 8, 10,30, 20, 36, 10, 10, 20]
           }
       ],
-      echarts3Data:[
-
-      ],
-      fileName: '',
-      fileList:[],
-      obj:{
-        agentid:"091291EA-02F1-4708-AD10-003F9243B468"
-      }
+      echarts3Data:[],
     };
   },
   components:{
     pie,lineBar,lineEchart
   },
-  created() {
-        this.$axios.get("/fr/USIM/getMyAgent",this._qs.stringify({
-            agentid: '091291EA-02F1-4708-AD10-003F9243B468',
-        })).then((res)=>{
-            console.log(res)
-        }).catch((res)=>{
-            console.log(res)
-        })
-
-        
-        // this.$axios.post("/api/toutiao/index",this._qs.stringify({
-        //     type: 'top',
-        //     key: 'a7581c76b3593a87a427aeacc8d87443',
-        // })).then((res)=>{
-        //     console.log(res)
-        // }).catch((res)=>{
-        //     console.log(res)
-        // })
-  },
+  created() {},
   mounted() {
 
   },

@@ -1,5 +1,7 @@
 import axios from 'axios'
-import { Loading } from 'element-ui';
+import { Loading,MessageBox } from 'element-ui';
+import router from '../../router'
+
 var instance = axios.create({ 
     timeout: 1000 * 12
 });
@@ -11,8 +13,7 @@ let loadingInstance;
             loadingInstance=Loading.service({ fullscreen: true,text:"数据加载中" });
             //console.log(config)
             //根据config.url判断路径 是否需要加请求头
-            // config.headers.common['token'] = localStorage.getItem('token');//可新增
-            // config.headers.post['Content-Type2'] = 'application/x-www-form-urlencodedsssssssss';//可修改
+            config.headers.common['token'] = localStorage.getItem('token');//可新增
             return config
         }, error => {
             // 对请求错误做些什么
@@ -27,7 +28,7 @@ let loadingInstance;
             const res = response.data
             if(res.errCode==-1){
                 //跳转到登录页
-                MessageBox.alert('登录信息超时，请重新登录！', '登录超时', {
+                MessageBox.alert('信息有误，请重新登录！', '信息有误', {
                     confirmButtonText: '确定',
                     callback: action => {
                        localStorage.removeItem('token');

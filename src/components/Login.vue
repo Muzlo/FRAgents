@@ -49,9 +49,11 @@ export default {
       if(isHave!=null){
         this.form=JSON.parse(isHave)
       }
+      this.checked= localStorage.getItem("userLoginChecked")=="false||null"?false:true;
     },
     methods: {
       onSubmit(form) {
+        localStorage.setItem('userLoginChecked',JSON.stringify(this.checked));
         if(this.checked){
           localStorage.setItem('userLoginInfo',JSON.stringify(this.form));
         }
@@ -64,10 +66,22 @@ export default {
         });
       },
       async loginFn(){
-        
         const data=await this.$axios.post(`${baseURL.ip1}/Login/checkLogin`,this._qs.stringify(this.form) );
-        localStorage.setItem('token', data.token);
-        this.$router.push({ path: this.redirect || '/' }, onComplete => { }, onAbort => { })
+        try {
+            if(data.errcode==0){
+              localStorage.setItem('token', data.token);
+              localStorage.setItem('agentid', data.agentid);
+              localStorage.setItem('userid', data.userid);
+              this.$router.push({ path: this.redirect || '/' }, onComplete => { }, onAbort => { })
+            }else{
+              this.$message.error(data.errMsg);
+            }
+        } catch (err) {
+            console.log(err);
+            this.$message.error("服务器异常，请稍后再试！");
+        }
+
+
       }
     }
   }
