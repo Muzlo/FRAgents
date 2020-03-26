@@ -2,7 +2,7 @@
   <div class="home-wrapper">
     <el-row :gutter="20">
       <el-col :span="12">
-        <pie :pieData="echarts1Data"/>
+        <pie :pieData="echarts1DataFn"/>
       </el-col>
       <el-col :span="12">
         <lineBar :lineBarData="echarts2Data"/>
@@ -27,28 +27,7 @@ export default {
   name: "home",
   data() {
     return {
-      echarts1Data:[
-        {
-          value: 3661,
-          name: "未激活"
-        },
-        {
-          value: 5713,
-          name: "已激活"
-        },
-        {
-          value: 9938,
-          name: "已停用"
-        },
-        {
-          value: 17623,
-          name: "网卡总量"
-        },
-        {
-          value: 3299,
-          name: "已过期"
-        }
-      ],
+      echarts1Data:[],
       echarts2Data:[
           {
               name:"收入",
@@ -67,9 +46,32 @@ export default {
   },
   created() {},
   mounted() {
-
+    this.getecharts1Data();
+  },
+  computed:{
+    echarts1DataFn:function (){
+      let echarts1Data2=[];
+      this.echarts1Data.forEach((item,index)=>{
+        echarts1Data2[index]={
+          "name":item.statusName,
+          "value":Number(item.cnt)
+        };
+      })
+      return echarts1Data2;
+    },
   },
   methods:{
+    async getecharts1Data(){
+      try{
+        const data=await this.$axios.post(`/fr/DataCount/getStatusCount`,this._qs.stringify({
+          agentId:localStorage.getItem("agentid")
+        }));
+        this.echarts1Data=data.data;
+      }catch(err){
+        this.$message.error("服务器异常，请稍后再试！");
+      }
+        
+    }
  
   }
 

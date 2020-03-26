@@ -5,6 +5,7 @@
     @mouseout="echart1TimerStart"
     @mouseover="echart1TimerEnd"
   ></div>
+
 </template>
 
 <script>
@@ -18,34 +19,29 @@ export default {
   data() {
     return {
       echartData: {
-        list:[],
         echartDataIndex1: 1,
         echartDataIndex2: 0,
         timer: null
       }
     };
   },
-  created(){
-    this.echartData.list=this.pieData
-  },
+  created(){},
   beforeDestroy() {
       //清除定时器
       clearInterval(this.echartData.timer);
-      console.log("beforeDestroy");
+      //console.log("beforeDestroy");
   },
   destroyed() {
       //清除定时器
       clearInterval(this.echartData.timer);
-      console.log("destroyed");
+     // console.log("destroyed");
   },
   mounted() {
-    this.echart1Fn(this.echartData.list);
-
+    this.echart1Fn(this.pieData);
     this.echartData.timer = setInterval(() => {
       this.echart1Timer();
     }, 3000);
   },
-
   methods: {
     echart1Fn(data) {
       var _this = this;
@@ -152,7 +148,7 @@ export default {
         echart1.dispatchAction({
           type: "downplay",
           seriesIndex: 0,
-          dataIndex: this.echartData.list.length - 1
+          dataIndex: this.pieData.length - 1
         });
       }
     },
@@ -160,11 +156,11 @@ export default {
     echart1Timer() {
       this.echartData.echartDataIndex1++;
       this.echartData.echartDataIndex2++;
-      if (this.echartData.echartDataIndex1 >= this.echartData.list.length) {
+      if (this.echartData.echartDataIndex1 >= this.pieData.length) {
         this.echartData.echartDataIndex1 = 0;
         this.echartData.echartDataIndex2 = -1;
       }
-      this.echart1Fn(this.echartData.list);
+      this.echart1Fn(this.pieData);
     },
     /////鼠标移出
     echart1TimerStart() {
@@ -175,6 +171,11 @@ export default {
     ////////鼠标移入
     echart1TimerEnd() {
      clearInterval(this.echartData.timer);
+    }
+  },
+  watch:{
+    pieData(newVal,oldVal){
+      console.log(newVal,oldVal)
     }
   }
 };

@@ -7,7 +7,6 @@ let hasMenus = false
 router.beforeEach(async (to, from, next) => {
     document.title = getDocumentTitle(to.meta.title)
     if (localStorage.getItem('token')) {
-            console.log("ss")
             if (to.path === '/login') {
                 next({ path: '/' })
             } else if (hasMenus) {
@@ -105,6 +104,10 @@ router.beforeEach(async (to, from, next) => {
                                     name: 'userManage',
                                     text: '用户管理',
                                     
+                                },
+                                {
+                                    name: 'userPassword',
+                                    text: '密码修改',
                                 },
                                 {
                                     name: 'msg',

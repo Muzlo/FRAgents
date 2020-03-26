@@ -623,14 +623,7 @@ export default {
     }
   },
   created() {
-        this.$axios.post("/api/toutiao/index",this._qs.stringify({
-            type: 'top',
-            key: 'a7581c76b3593a87a427aeacc8d87443',
-        })).then((res)=>{
-            console.log(res)
-        }).catch((res)=>{
-            console.log(res)
-        })
+
   },
   computed: {},
   watch: {

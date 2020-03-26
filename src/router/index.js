@@ -123,6 +123,12 @@ export const asyncRoutes = {
         meta: { title: '用户管理' },
         component: () => import('../views/userPower/userManage.vue'),
     },
+    userPassword: {
+        path: 'userPassword',
+        name: 'userPassword',
+        meta: { title: '密码修改' },
+        component: () => import('../views/userPower/userPassword.vue'),
+    },
     //////我的卡
     allCard: {
         path: 'allCard',
