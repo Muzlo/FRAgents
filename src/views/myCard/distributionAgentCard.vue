@@ -190,8 +190,8 @@ export default {
         async getMyAgentFn(){
             try {
                 const data = await this.$axios.post(
-                "/fr/USIM/getMyAgent",
-                this._qs.stringify({agentid: localStorage.getItem("agentid")}),
+                "/fr/AllUSIM/myAgent",
+                this._qs.stringify({agentId: localStorage.getItem("agentid")}),
                 );
                 if(data.errcode==0){
                     this.agentsList=data.data;
@@ -220,9 +220,14 @@ export default {
           if(this.formAllInfo2.agentsList){
             let fileObj = param.file // 相当于input里取得的files
             let fd = new window.FormData()// FormData 对象
-            fd.append('files', fileObj)// 文件对象
-            fd.append('flowPoolId', this.flowPoolId)// 文件对象
-            let url = `${baseURL.ip1}/`;
+            fd.append('file', fileObj)// 文件对象
+            fd.append('agentId', localStorage.getItem("agentid"))// 文件对象
+            fd.append('hidSelAgent',this.formAllInfo2.agentsList)// 文件对象
+            fd.append('userid', localStorage.getItem("userid"))// 文件对象
+            fd.append('username', JSON.parse(localStorage.getItem("userLoginInfo")).username)// 文件对象
+            fd.append('usertype', localStorage.getItem("usertype"))
+            fd.append('basePath', location.host)
+            let url = `${baseURL.ip1}/USIM/doFileUpload`;
             var options = {
                 url: url,
                 data: fd,
@@ -246,36 +251,55 @@ export default {
         },
         //全部分配
         async allFenPeiFn(){
-            let paramsObj={
-                agentId:localStorage.getItem("agentid"),
-                userid:localStorage.getItem("userid"),
-                username:JSON.parse(localStorage.getItem("userLoginInfo")).username
-            };
-            
-            let startCardNo={startCardNo:this.formAllInfo.startCard}
-            let endCardNo={endCardNo:this.formAllInfo.endCard}
-            paramsObj={...paramsObj,...startCardNo,...endCardNo};
-            console.log(paramsObj)
-            try {
-                const data = await this.$axios.post(
-                "/fr/USIM/AllocationAllAgent",
-                this._qs.stringify(paramsObj),
-                );
-                if(data.errcode==0){
-                    this.agentsList=data.data;
-                }else{
-                    this.$message.error(data.errmsg);
+            if(this.formAllInfo.agentsList){
+                let paramsObj={
+                    agentId :this.formAllInfo.agentsList,
+                    userid :localStorage.getItem("userid"),
+                    username :JSON.parse(localStorage.getItem("userLoginInfo")).username
+                };
+                let agentId2  ={agentId2 :localStorage.getItem("agentid")}
+                let startCardNo={startCardNo:this.formAllInfo.startCard}
+                let endCardNo={endCardNo:this.formAllInfo.endCard}
+                paramsObj={...paramsObj,...startCardNo,...endCardNo,...agentId2};
+                try {
+                    const data = await this.$axios.post(
+                    "/fr/USIM/AllocationAllAgent",
+                    this._qs.stringify(paramsObj),
+                    );
+                    data.errcode==0 ? this.$message.success(data.errmsg) :this.$message.error(data.errmsg)
+                } catch (err) {
+                    this.$message.error("服务器异常，请稍后再试！");
                 }
-                
-            } catch (err) {
-                console.log(err);
-                this.$message.error("服务器异常，请稍后再试！");
+            }else{
+                this.$message.warning("请选择流量池！");
             }
+            
 
         },
         //单个分配
-        fenPei(id){
-            console.log(id)
+        async fenPei(id){
+            if(this.formAllInfo.agentsList){
+                let paramsObj={
+                    userid :localStorage.getItem("userid"),
+                    username :JSON.parse(localStorage.getItem("userLoginInfo")).username,
+                    cardId :id,
+                    agentid :this.formAllInfo.agentsList
+                };
+
+                try{
+                    const data = await this.$axios.post(
+                    "/fr/USIM/AllocationAgent",
+                    this._qs.stringify(paramsObj),
+                    );
+                    data.errcode==0 ? this.$message.success(data.errmsg) :this.$message.error(data.errmsg)
+                }catch (err) {
+                    this.$message.error("服务器异常，请稍后再试！");
+                }
+            }else{
+                this.$message.error("请先选择代理商");
+            }
+            
+
         },
         handleSizeChange(data) {
             this.pageSize = data;

@@ -72,6 +72,7 @@ export default {
               localStorage.setItem('token', data.token);
               localStorage.setItem('agentid', data.agentid);
               localStorage.setItem('userid', data.userid);
+              localStorage.setItem('usertype', data.usertype);
               this.$router.push({ path: this.redirect || '/' }, onComplete => { }, onAbort => { })
             }else{
               this.$message.error(data.errMsg);
