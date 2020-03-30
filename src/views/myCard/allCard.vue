@@ -120,7 +120,7 @@
 
         <template slot-scope="scope">
 
-          <el-button size="mini"@click="huishouFn(scope.row.cardid)">回收</el-button>
+          <el-button size="mini" @click="huishouFn(scope.row.cardid)">回收</el-button>
   
           <el-button size="mini" type="danger" @click="delFn(scope.row.cardid)">删除</el-button>
 
