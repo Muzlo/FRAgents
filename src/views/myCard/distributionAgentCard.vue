@@ -1,5 +1,6 @@
 <template>
     <div>
+
         <el-tabs v-model="activeName">
             <el-tab-pane label="方式一" name="first">
                 <el-form size="mini" ref="formSearchTpye1" :inline="true" :model="formAllInfo" label-width="100px">
@@ -125,14 +126,18 @@ export default {
     data() {
         return {
             activeName: "first",
-            formAllInfo:{},//tab1
-            formAllInfo2:{},//tab2
+            formAllInfo:{
+                agentsList:null
+            },//tab1
+            formAllInfo2:{
+                agentsList:null
+            },//tab2
             agentsList:[],//代理商列表
             fileList:[],
             tableData:[],
             currentPage: 1, //当前第一页
-            pageSize:3, //默认每页1条数据
-            pageSizes:[3,50,100], //设置每页显示多少条
+            pageSize:30, //默认每页1条数据
+            pageSizes:[30,50,100], //设置每页显示多少条
             keySearch:"",
             windowHeight:"",//窗口高度
         }
@@ -324,6 +329,14 @@ export default {
         handleCurrentChange(data) {
             this.currentPage = data;
         },
+    },
+    beforeRouteEnter (to, from, next) {
+        next(vm => {
+            if(vm.$route.params.id){
+                vm.formAllInfo.agentsList=vm.$route.params.id;
+                vm.formAllInfo2.agentsList=vm.$route.params.id;
+            }
+        })
     }
 }
 </script>

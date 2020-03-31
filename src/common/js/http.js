@@ -28,7 +28,7 @@ let loadingInstance;
             const res = response.data
             if(res.errCode==-1){
                 //跳转到登录页
-                MessageBox.alert('信息有误，请重新登录！', '信息有误', {
+                MessageBox.alert('登录超时，请重新登录！', '信息有误', {
                     confirmButtonText: '确定',
                     callback: action => {
                        localStorage.removeItem('token');

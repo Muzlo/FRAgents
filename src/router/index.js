@@ -17,6 +17,7 @@ const commonRoutes = [
         component: () => import('../components/404.vue'),
     },
     { path: '/', redirect: '/home' },
+    
 ]
 
 // 本地所有的页面 需要配合后台返回的数据生成页面
@@ -27,14 +28,19 @@ export const asyncRoutes = {
         meta: { title: '主页' },
         component: () => import('../views/Home.vue'),
     },
-    /////////////////通知消息
-    msg: {
-        path: 'msg',
-        name: 'msg',
-        meta: { title: '通知消息' },
-        component: () => import('../views/Msg.vue'),
+    /////////////////消息管理
+    pushMsg: {
+        path: 'pushMsg',
+        name: 'pushMsg',
+        meta: { title: '推送消息' },
+        component: () => import('../views/pushMessage/pushMsg.vue'),
     },
-
+    acceptMsg: {
+        path: 'acceptMsg',
+        name: 'acceptMsg',
+        meta: { title: '查收消息' },
+        component: () => import('../views/pushMessage/acceptMsg.vue'),
+    },
     ///////////////我的代理商
     agentsJkRoyaltySet: {
         path: 'agentsJkRoyaltySet',
@@ -154,6 +160,7 @@ export const asyncRoutes = {
         meta: { title: '卡号更换' },
         component: () => import('../views/myCard/cardChange.vue'),
     },
+    
 
 
 }

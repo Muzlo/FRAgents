@@ -109,10 +109,10 @@ router.beforeEach(async (to, from, next) => {
                                     name: 'userPassword',
                                     text: '密码修改',
                                 },
-                                {
-                                    name: 'msg',
-                                    text: '通知消息',
-                                },
+                                // {
+                                //     name: 'msg',
+                                //     text: '通知消息',
+                                // },
                             ]
                         },
                         {
@@ -138,6 +138,19 @@ router.beforeEach(async (to, from, next) => {
                                 },
                             ]
                         },
+                        {
+                            text: '消息管理',
+                            children:[
+                                {
+                                    name: 'pushMsg',
+                                    text: '推送消息',
+                                },
+                                {
+                                    name: 'acceptMsg',
+                                    text: '查收消息',
+                                }
+                            ]
+                        }
                         
                     ];
                     
@@ -157,6 +170,9 @@ router.beforeEach(async (to, from, next) => {
                                     break;
                                 case "我的卡":
                                     item.icon="el-icon-postcard"
+                                    break;
+                                case "消息管理":
+                                    item.icon="el-icon-s-promotion"
                                     break;
                             }
 

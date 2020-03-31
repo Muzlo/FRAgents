@@ -1,12 +1,13 @@
 <template>
   <div>
+{{formAllInfo.agents}}
     <el-tabs v-model="activeName">
       <el-tab-pane label="查询方式一" name="first">
         <el-form ref="formSearchTpye1" :inline="true" :model="formAllInfo" label-width="80px">
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="网卡类型">
-                <el-select v-model="formAllInfo.cardClass" filterable placeholder="请选择">
+                <el-select :clearable="true" v-model="formAllInfo.cardClass" filterable placeholder="请选择">
                   <el-option :label="item.className" :value="item.classCode" v-for="item in cardClassList" :key="item.classCode"></el-option>
                 </el-select>
               </el-form-item>
@@ -14,14 +15,15 @@
 
             <el-col :span="8">
               <el-form-item label="代理商">
-                <el-select v-model="formAllInfo.agents" filterable placeholder="请选择">
+                <el-select :clearable="true" v-model="formAllInfo.agentId" filterable placeholder="请选择">
                   <el-option :label="item.agentname" :value="item.id" v-for="item in agentsList" :key="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
+    
             <el-col :span="8">
               <el-form-item label="网卡状态">
-                <el-select v-model="formAllInfo.cardStatus" filterable placeholder="请选择">
+                <el-select :clearable="true" v-model="formAllInfo.cardStatus" filterable placeholder="请选择">
                   <el-option :label="item.statusName" :value="item.statusCode" v-for="item in cardStatusList" :key="item.id"></el-option>
                 </el-select>
               </el-form-item>
@@ -38,7 +40,7 @@
             </el-col>
           </el-row>
           <el-form-item label="号码类型">
-            <el-select v-model="formAllInfo.numberType" filterable placeholder="请选择">
+            <el-select :clearable="true" v-model="formAllInfo.numberType" filterable placeholder="请选择">
               <el-option label="卡号" value="0"></el-option>
               <el-option label="串号" value="1"></el-option>
               <el-option label="IMSI号" value="2"></el-option>
@@ -63,7 +65,7 @@
       <el-tab-pane label="查询方式二" name="second">
         <el-form ref="formSearchTpye2" :model="formAllInfo2" label-width="80px">
           <el-form-item label="号码类型">
-            <el-select v-model="formAllInfo2.numberType2" filterable placeholder="请选择">
+            <el-select :clearable="true" v-model="formAllInfo2.numberType2" filterable placeholder="请选择">
               <el-option label="卡号" value="0"></el-option>
               <el-option label="串号" value="1"></el-option>
               <el-option label="IMSI号" value="2"></el-option>
@@ -149,7 +151,9 @@ export default {
   data() {
     return {
       activeName: "first",
-      formAllInfo:{},//tab1
+      formAllInfo:{
+        agentId:null
+      },//tab1
       formAllInfo2:{},//tab2
       agentsList:[],//代理商列表
       cardClassList:[],//卡类型列表
@@ -157,13 +161,15 @@ export default {
       fileList:[],
       tableData:[],
       currentPage: 1, //当前第一页
-      pageSize:3, //默认每页1条数据
-      pageSizes:[3,50,100], //设置每页显示多少条
+      pageSize:30, //默认每页1条数据
+      pageSizes:[30,50,100], //设置每页显示多少条
       keySearch:"",
       windowHeight:"",//窗口高度
+ 
     };
   },
   components: {pagination},
+
   mounted() {
       this.getMyAgentFn();
       this.getCardStatusFn();
@@ -269,7 +275,7 @@ export default {
        let paramsObj={
           username:JSON.parse(localStorage.getItem("userLoginInfo")).username,
           userId:localStorage.getItem("userid"),
-          agentId: localStorage.getItem("agentid")
+          agent:localStorage.getItem("agentid")
         }
         paramsObj={...paramsObj,...this.formAllInfo2};
         try {
@@ -295,10 +301,11 @@ export default {
         let paramsObj={
           username:JSON.parse(localStorage.getItem("userLoginInfo")).username,
           userId:localStorage.getItem("userid"),
-          agentId: localStorage.getItem("agentid")
+          agent:localStorage.getItem("agentid")
         }
-        paramsObj={...paramsObj,...this.formAllInfo}
+ 
 
+        paramsObj={...paramsObj,...this.formAllInfo}
 
         if((this.formAllInfo.endCardNumber || this.formAllInfo.startCardNumber) &&  !this.formAllInfo.numberType){
           this.$message.warning("请选择号码类型！");
@@ -386,6 +393,15 @@ export default {
         this.currentPage = data;
     },
   },
+
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      if(vm.$route.params.id){
+        vm.formAllInfo.agentId=vm.$route.params.id
+      }
+    })
+  }
+
 
 };
 </script>

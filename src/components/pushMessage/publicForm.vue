@@ -8,7 +8,6 @@
         :rules="formRules"
         :model="form"
         label-width="120px"
-        :inline="inline"
       >
         <slot name="formContent"></slot>
 
@@ -33,8 +32,7 @@ export default {
     form:{},
     otherInfo:{},
     url:{},
-    width:{},
-    inline:{}
+    width:{}
   },
   data(){
     return {
@@ -79,7 +77,7 @@ export default {
           }else if(this.otherInfo=="0"){ //新增
               this.publicHandle(this.url.addUrl,'post');
           }
- 
+
       },
       //新增 更新 删除 公共函数
       async publicHandle(url,method){
@@ -88,6 +86,7 @@ export default {
               this._qs.stringify(this.form)
               );
               data.errcode==0?this.$message.success(data.errmsg) : this.$message.error(data.errmsg)
+              this.$parent.getTableData();
           } catch (err) {
               this.$message.error("服务器异常，请稍后再试！");
           }
@@ -99,5 +98,7 @@ export default {
 </script>
 
 <style>
-
+.v-modal{
+    z-index: 100 !important;
+}
 </style>

@@ -56,6 +56,9 @@
                         <p class="crumbs">{{crumbs}}</p>
                     </div>
                     <div class="h-right">
+                        <!-- 用户余额 -->
+        
+
                         <!-- 消息 -->
                         <div class="notice-c" @click="info" title="查看新消息">
                             <div :class="{newMsg: hasNewMsg}"></div>
@@ -76,8 +79,7 @@
                             </div>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item command="1">修改密码</el-dropdown-item>
-                                <el-dropdown-item command="2">基本资料</el-dropdown-item>
-                                <el-dropdown-item command="3">退出登陆</el-dropdown-item>
+                                <el-dropdown-item command="2">退出登陆</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
 
@@ -160,11 +162,13 @@ export default {
             userName: null,
             // 主页路由名称
             home: 'home',
-            dialogArr : []
+            dialogArr : [],
+            accountCount:0,//余额
         }
     },
     created() {
         this.userName=JSON.parse(localStorage.getItem("userLoginInfo")).username
+        //this.getAccountCount();
     },
     mounted() {
         // 第一个标签
@@ -226,6 +230,17 @@ export default {
         },
     },
     methods: {
+        //账户余额
+        async getAccountCount(){
+            try{
+                const data=await this.$axios.post(`/fr/DataCount/getAccountCount`,this._qs.stringify({
+                agentId:localStorage.getItem("agentid")
+                }));
+                console.log(data)
+            }catch(err){
+                this.$message.error("服务器异常，请稍后再试！");
+            }
+        },
         getMenus(name) {
             let menus
             const tagTitle = this.nameToTitle[name]
@@ -283,13 +298,9 @@ export default {
             switch (name) {
                 case '1':
                     // 修改密码
-                    this.gotoPage('password')
+                    this.gotoPage('userPassword')
                     break
                 case '2':
-                    // 基本资料
-                    this.gotoPage('userinfo')
-                    break
-                case '3':
                     resetTokenAndClearUser()
                     this.$router.replace({ name: 'login' })
                     break
@@ -380,7 +391,7 @@ export default {
                 dangerouslyUseHTMLString:true,
                 message: '<p style="height:10px;"></p><span style="cursor:pointer;padding:4px 8px;margin-top:10px;background:#409EFF;color:#fff;border-radius:2px;">点击查看</span>',
                 onClick(){
-                    self.gotoPage("msg");
+                    self.gotoPage("acceptMsg");
                     notify.close()
                 },
             });

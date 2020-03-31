@@ -175,7 +175,7 @@ export default {
   },
   watch:{
     pieData(newVal,oldVal){
-      console.log(newVal,oldVal)
+      
     }
   }
 };
