@@ -73,7 +73,6 @@
     </el-form>
 
     <el-divider></el-divider>
-    {{tableData}}
     <el-table
       border
       :data="tableList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
@@ -82,7 +81,7 @@
 
       <el-table-column align="center" prop="agentname" label="代理商名称" width="250" fixed></el-table-column>
       <el-table-column align="center" prop="agentno" label="代理商编号" width="100"></el-table-column>
-      <el-table-column align="center" prop="cardCount" label="网卡总数" width="100"></el-table-column>
+      <el-table-column align="center" prop="num" label="网卡总数" width="100"></el-table-column>
       <el-table-column align="center" prop="bankname" label="开户行" width="250"></el-table-column>
       <el-table-column align="center" prop="bankcardno" label="银行卡号" width="160"></el-table-column>
       <el-table-column align="center" prop="agentprov" label="省份" width="80"></el-table-column>
@@ -91,7 +90,7 @@
       <el-table-column align="center" prop="agenttel" label="联系电话" width="120"></el-table-column>
       <el-table-column align="center" prop="agentmobile" label="手机号" width="120"></el-table-column>
       <el-table-column align="center" prop="agentlinkmang" label="联系人" width="80"></el-table-column>
-      <el-table-column align="right" width="260" fixed="right">
+      <el-table-column align="right" width="300" fixed="right">
         <template slot="header" slot-scope="scope">
           <el-input v-model="keySearch" size="mini" placeholder="输入代理商名称搜索" />
         </template>
@@ -121,6 +120,16 @@
               @click="delAgents(scope.row)"
             ></el-button>
           </el-tooltip>
+
+          <el-tooltip effect="dark" content="查看账户信息" placement="top-start">
+            <el-button
+              size="mini"
+              type="info"
+              icon="el-icon-warning-outline"
+              @click="viewAgentAccount(scope.row)"
+            ></el-button>
+          </el-tooltip>
+
         </template>
       </el-table-column>
     </el-table>
@@ -316,6 +325,81 @@ export default {
 
       this.confirmFn("删除", delAgentsFn);
     },
+    //查看账户信息
+    async viewAgentAccount(msg){
+
+      if(msg.ispre){
+        try {
+          let data = await this.$axios.post("/fr/MyAgent/viewAgentAccount",this._qs.stringify({id: msg.id}));
+          if(data.errcode==0){
+
+            if(data.lst.data){
+              const h = this.$createElement;
+              this.$msgbox({
+                title: '下级代理账户信息',
+                message: h('div', null, [
+                  h('p', null, `预付金额：${data.lst.data.retamt}`),
+                  h('p', null, `扣款金额：${data.lst.data.inamt}`),
+                  h('p', null, `手动扣款金额：${data.lst.data.reqamt}`),
+                  h('p', null, `余额：`+`${data.lst.data.retamt-data.lst.data.inamt-data.lst.data.reqamt}`),
+                ]),
+                showCancelButton: false,
+                confirmButtonText: '确定',
+              }).catch(() => {
+                  this.$message({
+                      type: 'info',
+                      message: '已取消'
+                  });          
+              });
+            }else{
+              this.$message.error("没有数据");
+            }
+            
+
+
+          }else{
+            this.$message.error(data.errmsg);
+          }
+
+
+        } catch (err) {
+          this.$message.error("服务器异常，请稍后再试！");
+        } 
+      }else{
+        try {
+          let data = await this.$axios.post("/fr/MyAgent/viewAgentAccount",this._qs.stringify({id: msg.id}));
+          if(data.errcode==0){
+            if(data.lst.data){
+              const h = this.$createElement;
+              this.$msgbox({
+                title: '下级代理账户信息',
+                message: h('div', null, [
+                  h('p', null, `返利金额：${data.lst.data.inamt}`),
+                  h('p', null, `申请金额：${data.lst.data.reqamt}`),
+                  h('p', null, `转账金额：${data.lst.data.retamt}`),
+                  h('p', null, `余额：`+`${data.lst.data.startamt+data.lst.data.inamt-data.lst.data.reqamt}`),
+                ]),
+                showCancelButton: false,
+                confirmButtonText: '确定',
+              }).catch(() => {
+                  this.$message({
+                      type: 'info',
+                      message: '已取消'
+                  });          
+              });
+            }else{
+              this.$message.error("没有数据");
+            }
+          }else{
+            this.$message.error(data.errmsg);
+          }
+        } catch (err) {
+          this.$message.error("服务器异常，请稍后再试！");
+        }
+    }
+
+
+    },
     //修改代理商
     updAgents(data) {
       this.$store.commit("dialogVisible/dialogVisibleMutations", true);
@@ -399,13 +483,14 @@ export default {
         let data = await this.$axios.post(url, this._qs.stringify(paramsObj));
         if (data.errcode == 0) {
           if (url.includes("myAgentSearch")) {
-            let arr=[];
-              for(let i=0;i<data.lst.data.length;i++){
-                let data2 = await this.$axios.post(`/fr/MyAgent/getCardCount`, this._qs.stringify({id:data.lst.data[i].id}));
-                arr.push(data.lst.data[i]);
-                arr[i].cardCount=data2.lst;
-              }
-              this.tableData =arr;
+            this.tableData=data.lst.data;
+            // let arr=[];
+            //   for(let i=0;i<data.lst.data.length;i++){
+            //     let data2 = await this.$axios.post(`/fr/MyAgent/getCardCount`, this._qs.stringify({id:data.lst.data[i].id}));
+            //     arr.push(data.lst.data[i]);
+            //     arr[i].cardCount=data2.lst;
+            //   }
+            //   this.tableData =arr;
           }
           if (url.includes("downLoadAgent")) {
             window.location.href = data.downUrl;

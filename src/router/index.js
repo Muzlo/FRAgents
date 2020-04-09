@@ -166,6 +166,7 @@ export const asyncRoutes = {
 }
 
 const createRouter = () => new Router({
+    base:'/frangets/',
     routes: commonRoutes,
 })
 
