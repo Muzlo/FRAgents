@@ -1,6 +1,5 @@
 <template>
   <div>
-{{formAllInfo.agents}}
     <el-tabs v-model="activeName">
       <el-tab-pane label="查询方式一" name="first">
         <el-form ref="formSearchTpye1" :inline="true" :model="formAllInfo" label-width="80px">
@@ -284,8 +283,11 @@ export default {
             this._qs.stringify(paramsObj),
             );
             if(data.errcode==0){
-                this.tableData=data.data;
-                this.$message.success(data.errmsg);
+                if(url=="getCardSearch"){
+                  this.tableData=data.data;
+                }else if(url=="download"){
+                  this.$message.success(data.errmsg);
+                }
             }else{
                 this.$message.error(data.errmsg);
             }
@@ -303,8 +305,6 @@ export default {
           userId:localStorage.getItem("userid"),
           agent:localStorage.getItem("agentid")
         }
- 
-
         paramsObj={...paramsObj,...this.formAllInfo}
 
         if((this.formAllInfo.endCardNumber || this.formAllInfo.startCardNumber) &&  !this.formAllInfo.numberType){
@@ -317,8 +317,11 @@ export default {
                 this._qs.stringify(paramsObj),
                 );
                 if(data.errcode==0){
-                    this.tableData=data.data;
-                    this.$message.success(data.errmsg);
+                    if(url=="getCardSearch"){
+                      this.tableData=data.data;
+                    }else if(url=="download"){
+                      this.$message.success(data.errmsg);
+                    }
                 }else{
                     this.$message.error(data.errmsg);
                 }
@@ -336,10 +339,14 @@ export default {
         try {
             const data = await this.$axios.post(
             "/fr/AllUSIM/myAgent",
-            this._qs.stringify({agentId: localStorage.getItem("agentid")}),
+            this._qs.stringify({
+              agentId: localStorage.getItem("agentid"),
+              userId:localStorage.getItem("userid"),
+              username:JSON.parse(localStorage.getItem("userLoginInfo")).username
+            }),
             );
             if(data.errcode==0){
-                this.agentsList=data.data;
+                this.agentsList=data.data.data;
             }else{
                 this.$message.error(data.errmsg);
             }
@@ -373,9 +380,14 @@ export default {
     },
     async getCardStatusFn(){
         try {
-            const data = await this.$axios.post("/fr/AllUSIM/cardStatus");
+            const data = await this.$axios.post("/fr/AllUSIM/cardStatus",
+            this._qs.stringify({
+                userId:localStorage.getItem("userid"),
+                username:JSON.parse(localStorage.getItem("userLoginInfo")).username
+            }),
+            );
             if(data.errcode==0){
-                this.cardStatusList=data.data;
+                this.cardStatusList=data.data.data;
             }else{
                 this.$message.error(data.errmsg);
             }
@@ -394,13 +406,13 @@ export default {
     },
   },
 
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      if(vm.$route.params.id){
-        vm.formAllInfo.agentId=vm.$route.params.id
-      }
-    })
-  }
+  // beforeRouteEnter (to, from, next) {
+  //   next(vm => {
+  //     if(vm.$route.params.id){
+  //       vm.formAllInfo.agentId=vm.$route.params.id
+  //     }
+  //   })
+  // }
 
 
 };

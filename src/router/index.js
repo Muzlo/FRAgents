@@ -70,7 +70,7 @@ export const asyncRoutes = {
     myAccount: {
         path: 'myAccount',
         name: 'myAccount',
-        meta: { title: '代理商查询' },
+        meta: { title: '我的账户' },
         component: () => import('../views/myMoneybag/myAccount.vue'),
     },
     agentCashWithdrawalApplication: {
@@ -114,6 +114,18 @@ export const asyncRoutes = {
         name: 'JkReconciliation',
         meta: { title: '接口对账' },
         component: () => import('../views/myMoneybag/JkReconciliation.vue'),
+    },
+    preCutLst: {
+        path: 'preCutLst',
+        name: 'preCutLst',
+        meta: { title: '扣款记录' },
+        component: () => import('../views/myMoneybag/preCutLst.vue'),
+    },
+    prePayLst: {
+        path: 'prePayLst',
+        name: 'prePayLst',
+        meta: { title: '充值记录' },
+        component: () => import('../views/myMoneybag/prePayLst.vue'),
     },
 
     ////////////////用户管理与权限
@@ -160,12 +172,20 @@ export const asyncRoutes = {
         meta: { title: '卡号更换' },
         component: () => import('../views/myCard/cardChange.vue'),
     },
+    //任务管理
+    taskList: {
+        path: 'taskList',
+        name: 'taskList',
+        meta: { title: '任务列表' },
+        component: () => import('../views/taskManage/taskList.vue'),
+    },
     
 
 
 }
 
 const createRouter = () => new Router({
+    base:'/frangets/',
     routes: commonRoutes,
 })
 

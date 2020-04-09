@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <el-tabs v-model="activeName">
             <el-tab-pane label="方式一" name="first">
                 <el-form size="mini" ref="formSearchTpye1" :inline="true" :model="formAllInfo" label-width="100px">
@@ -78,9 +77,7 @@
     <el-table-column label="IMSI号" prop="cardImsi" width="170" align="center"></el-table-column>
     <el-table-column label="卡类型" prop="className" width="200" align="center"></el-table-column>
     <el-table-column label="套餐类型" prop="typeName" width="200" align="center"></el-table-column>
-
     <el-table-column label="总流量" prop="cardTotalData" width="100" align="center"></el-table-column>
-
     <el-table-column label="已用流量" prop="cardUsedData" width="100" align="center"></el-table-column>
     <el-table-column label="剩余流量" align="center" width="100">
         <template v-slot="scope">
@@ -113,6 +110,8 @@
       @handleSizeChangeEmit="handleSizeChange"
       @handleCurrentChangeEmit="handleCurrentChange"
     />
+
+
 
     </div>
 </template>
@@ -196,10 +195,14 @@ export default {
             try {
                 const data = await this.$axios.post(
                 "/fr/AllUSIM/myAgent",
-                this._qs.stringify({agentId: localStorage.getItem("agentid")}),
+                this._qs.stringify({
+                    agentId: localStorage.getItem("agentid"),
+                    userId:localStorage.getItem("userid"),
+                    username:JSON.parse(localStorage.getItem("userLoginInfo")).username
+                }),
                 );
                 if(data.errcode==0){
-                    this.agentsList=data.data;
+                    this.agentsList=data.data.data;
                 }else{
                     this.$message.error(data.errmsg);
                 }
@@ -231,7 +234,7 @@ export default {
             fd.append('userid', localStorage.getItem("userid"))// 文件对象
             fd.append('username', JSON.parse(localStorage.getItem("userLoginInfo")).username)// 文件对象
             fd.append('usertype', localStorage.getItem("usertype"))
-            fd.append('basePath', location.host)
+            // fd.append('basePath', location.host)
             let url = `${baseURL.ip1}/USIM/doFileUpload`;
             var options = {
                 url: url,
@@ -242,7 +245,7 @@ export default {
                 }
             }
             this.$axios(options).then((res)=>{
-              this.$message.success(res.message);
+              this.$message.success(res.errmsg);
             }).catch((err)=>{
               this.$message.error('上传失败！');
             })
@@ -264,7 +267,7 @@ export default {
             }).catch(() => {
                 this.$message({
                     type: 'info',
-                    message: '已取消删除'
+                    message: '已取消'
                 });          
             });
         },
@@ -330,14 +333,14 @@ export default {
             this.currentPage = data;
         },
     },
-    beforeRouteEnter (to, from, next) {
-        next(vm => {
-            if(vm.$route.params.id){
-                vm.formAllInfo.agentsList=vm.$route.params.id;
-                vm.formAllInfo2.agentsList=vm.$route.params.id;
-            }
-        })
-    }
+    // beforeRouteEnter (to, from, next) {
+    //     next(vm => {
+    //         if(vm.$route.params.id){
+    //             vm.formAllInfo.agentsList=vm.$route.params.id;
+    //             vm.formAllInfo2.agentsList=vm.$route.params.id;
+    //         }
+    //     })
+    // }
 }
 </script>
 

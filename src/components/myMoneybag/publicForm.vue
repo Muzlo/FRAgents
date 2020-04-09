@@ -16,7 +16,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleHidden">取 消</el-button>
-        <el-button type="primary" @click="formSubmitFn('apiUserForm');">确 定</el-button>
+        <el-button :disabled='disabledBtn' type="primary" @click="formSubmitFn('apiUserForm');">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -34,7 +34,8 @@ export default {
     otherInfo:{},
     url:{},
     width:{},
-    inline:{}
+    inline:{},
+    disabledBtn:{}
   },
   data(){
     return {
@@ -83,7 +84,6 @@ export default {
       },
       //新增 更新 删除 公共函数
       async publicHandle(url,method){
-   
           try {
               const data = await this.$axios[method](url,
               this._qs.stringify(this.form)

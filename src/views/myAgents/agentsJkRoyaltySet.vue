@@ -1,248 +1,208 @@
 <template>
-  <el-dialog
-      title="选择商品"
-      :visible.sync="reduceGoodsVisible"
-      width="1000px">
-      <div class="TransferBox">
-        <!--左边待选择-->
-        <div class="SourceBox">
-          <!--筛选-->
-          <div>
-            <el-input placeholder="请输入内容" v-model="searchKey"></el-input>
-          </div>
-          <el-table
-            :border="true"
-            height="400"
-            ref="multipleTable"
-            :data="shopOptions"
-            tooltip-effect="dark"
-            style="width: 100%"
-            @selection-change="handleSelectionChange">
-            <el-table-column
-              type="selection"
-              width="46">
-            </el-table-column>
-            <el-table-column
-              prop="title"
-              label="商品"
-              width="200">
-            </el-table-column>
-            <el-table-column
-              prop="spec_text"
-              label="规格">
-            </el-table-column>
-          </el-table>
-        </div>
-        <!--按钮-->
-        <div class="buttonCentenr">
-          <div class="posiBox">
-            <p><el-button  @click="deleteGoodesLeft"><i class="el-icon-arrow-left"></i></el-button></p>
-            <p><el-button type="primary" @click="AddGoodesRight"><i class="el-icon-arrow-right" ></i></el-button></p>
-          </div>
+    <div>
+        
+        <el-form size="mini" :inline="true" :model="form" label-width="100px">
+            <el-row>
+                <el-col :span="8">
+                    <el-form-item label="代理商">
+                        <!-- <el-select v-model="form.agentsList" filterable placeholder="请选择" @change="searchData">
+                            <el-option :label="item.agentname" :value="item.id" v-for="item in agentsList" :key="item.id"></el-option>
+                        </el-select> -->
+                        <agentsListComponent @searchDataEmit="searchDataEmitFn"></agentsListComponent>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </el-form>
 
-        </div>
-        <!--右边已选择-->
-        <div class="TargetBox">
-          <div class="titletableBox">
-            <p>已选择</p>
-          </div>
-          <el-table
-            :border="true"
-            height="400"
-            :data="TargetShopOptions"
-            tooltip-effect="dark"
-            @selection-change="deleteChange"
-            style="width: 100%">
-            <el-table-column
-              type="selection"
-              width="55">
-            </el-table-column>
-            <el-table-column
-              prop="title"
-              label="商品"
-              width="200">
-            </el-table-column>
-            <el-table-column
-              prop="spec_text"
-              label="规格">
-            </el-table-column>
-          </el-table>
-        </div>
+        <el-divider>查询结果</el-divider>
+
+<el-table border :stripe="true" :data="tableList.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
+    <el-table-column fixed type="index"></el-table-column>
+    <el-table-column fixed label="网卡类型" prop="cardClass" width="200" align="center"></el-table-column>
+    <el-table-column label="套餐名称" prop="typeName" width="200" align="center"></el-table-column>
+    <el-table-column label="流量" prop="countData" width="200" align="center"></el-table-column>
+    <el-table-column label="有效时长(月)" prop="validMonth" width="200" align="center"></el-table-column>
+    <el-table-column label="套餐金额" prop="countMoney" width="100" align="center"></el-table-column>
+    <el-table-column label="我的提成" prop="toppercentageamt" width="100" align="center"></el-table-column>
+    <el-table-column label="提成金额" prop="percentAgeamt" width="100" align="center"></el-table-column>
+
+
+
+    <el-table-column align="right" fixed="right" width="200">
+      <template slot="header" slot-scope="scope">
+        <el-input v-model="keySearch" size="mini" placeholder="输入网卡类型搜索"/>
+      </template>
+      <template slot-scope="scope">
+        <el-tooltip effect="dark" content="修改提成金额" placement="top-start">
+            <el-button size="mini" type="success" icon="el-icon-edit" @click="editPercent(scope.row)"></el-button>
+        </el-tooltip>
+
+      </template>
+    </el-table-column>
+</el-table>
+    <pagination
+      class="fr"
+      :total="tableList.length"
+      :currentPage="currentPage"
+      :pageSize="pageSize"
+      :pageSizes="pageSizes"
+      @handleSizeChangeEmit="handleSizeChange"
+      @handleCurrentChangeEmit="handleCurrentChange"
+    />
+
+
+<publicForm
+      :inline="formInline"
+      :otherInfo="otherInfo"
+      :width="formWidth"
+      :formTitle="formTitle"
+      :form="diaForm"
+      :url="url"
+      @resetFormEmit="resetForm"
+    >
+      <div slot="formContent">
+        <el-form-item label="套餐名称">
+          <el-input disabled v-model="diaForm2.pkName"></el-input>
+        </el-form-item>
+        <el-form-item label="总流量">
+          <el-input disabled v-model="diaForm2.pkData"></el-input>
+        </el-form-item>
+        <el-form-item label="有效时长（月）">
+          <el-input disabled v-model="diaForm2.pkMonth"></el-input>
+        </el-form-item>
+        <el-form-item label="套餐金额">
+          <el-input disabled v-model="diaForm2.pkMoney"></el-input>
+        </el-form-item>
+        <el-form-item label="我的提成">
+          <el-input disabled v-model="diaForm.topAgentAmt"></el-input>
+        </el-form-item>
+        <el-form-item label="提成金额">
+          <el-input v-model.trim="diaForm.PercentAmt" @input.native="keydownhandle"></el-input>
+        </el-form-item>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="reduceGoodsVisible = false">取 消</el-button>
-        <el-button type="primary" @click="yesshopName">确 定</el-button>
-      </span>
-    </el-dialog>
+    </publicForm>
 
+    
+    </div>
 </template>
 
 <script>
+import pagination from "../../components/myCard/pagination";
+import publicForm from "../../components/myCard/publicForm";
+import agentsListComponent from "../../components/agents/agentsList";
 export default {
-  name: "agentsJkRoyaltySet",
-  data() {
-    return {
-        searchKey:"",
-        reduceGoodsVisible:true,
-        multipleSelection: [],//全部商品多选选中
-        TargetShopOptions:[],//已选择商品数据
-        TargetMultipleSelection: [],//已选商品多选选中
-        shopOptions:[
-            {title:"11111",spec_text:"规格1"},
-            {title:"22222",spec_text:"规格2"},
-            {title:"33333",spec_text:"规格3"},
-            {title:"44444",spec_text:"规格4"},
-            {title:"55555",spec_text:"规格5"},
-            {title:"66666",spec_text:"规格6"},
-            {title:"77777",spec_text:"规格7"},
-            {title:"88888",spec_text:"规格8"},
-            {title:"99999",spec_text:"规格9"},
-            {title:"101010",spec_text:"规格10"},
-        ]
-    };
-  },
-  methods: {
-      /*穿梭到左边*/
-      deleteGoodesLeft(){
-        let TargetShopOptions=this.TargetShopOptions;//右边已选择表格数据
-        let TargetMultipleSelection=this.TargetMultipleSelection;//已选商品多选选中change数据
-        let deleteArry=[];//相同id的数据
-        TargetShopOptions.forEach(function (value, index, array) {
-          TargetMultipleSelection.forEach(function (item, itemindex, itemarray) {
-            if(value.id==item.id){
-              deleteArry.push(item.id);
+    name: 'agentsJkRoyaltySet',
+    data() {
+        return {
+            form: {},
+            tableData: [],
+            currentPage: 1, //当前第一页
+            pageSize: 30, //默认每页1条数据
+            pageSizes: [30, 50, 100], //设置每页显示多少条
+            keySearch: "",
+            agentsList:null,
+            otherInfo: "-1", //标记 '0'新增 '1'修改
+            formWidth: "700px",
+            formTitle: "",
+            diaForm: {},
+            diaForm2: {},
+            formInline: true,
+            //接口地址
+            url: {
+                updUrl: `/fr/MyAgent/saveCardPercent`,
             }
-          })
-        });
-        let deletemultipleSelection=this.multipleSelection;//右边已选择change数据
-        /*返回去掉已经选中的右边数据*/
-        deletemultipleSelection = deletemultipleSelection.filter(function(item){
-          return deleteArry.indexOf(item.id) == -1;
-        });
-        this.TargetShopOptions=deletemultipleSelection;//右边已选择重新赋值
-        this.toggleSelection(TargetMultipleSelection)//调用取消左边选中函数事件，将数据传输过去即可，调用ele的toggleRowSelection函数
-      },
-       /*穿梭框到右边*/
-      AddGoodesRight(){
-          this.TargetShopOptions=this.multipleSelection;
-      },
-       /*左边全部商品数据选中监听*/
-      handleSelectionChange(val) {
-          console.log(val)
-        this.multipleSelection = val;
-      },
-      /*右边商品数据选中监听*/
-      deleteChange(val){
-        this.TargetMultipleSelection=val;
-      },
-      /*弹框确定赋值到页面输入框*/
-      yesshopName(){
-        this.goodsName='';
-        this.addgoodsListArr=this.TargetShopOptions;
-        let self=this;
-        this.addgoodsListArr.forEach(function (value, index, array) {
-          self.goodsName+=value.title+'、';
-        });
-        self.reduceGoodsVisible=false;
-      },
-       /*取消商品已选择函数*/
-      toggleSelection(rows) {
-        if (rows) {
-          rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
-          });
-        } else {
-          this.$refs.multipleTable.clearSelection();
         }
-      },
-  },
-  created() {},
-  computed: {}
-};
+    },
+    created(){
+       // this.getMyAgentFn();
+    },
+    components: { pagination,publicForm,agentsListComponent},
+    computed: {
+        //复制一份表格数据
+        tableList() {
+            return this.tableData.filter(item => {
+                if (item.cardClass.includes(this.keySearch)) {
+                    return item;
+                }
+                this.currentPage = 1;
+            });
+        }
+    },
+    methods:{
+        keydownhandle(e) {
+            e.target.value = (e.target.value.match(/^\d*(\.?\d{0,2})/g)[0]) || null
+        },
+        resetForm(data) {
+            let formOtherInfo = {
+                agentId: localStorage.getItem("agentid"),
+                userId: localStorage.getItem("userid"),
+                userName: JSON.parse(localStorage.getItem("userLoginInfo")).username
+            };
+            this.diaForm = { ...formOtherInfo, ...data };
+        },
+        handleSizeChange(data) {
+            this.pageSize = data;
+            this.currentPage = 1;
+        },
+        handleCurrentChange(data) {
+            this.currentPage = data;
+        },
+        async searchDataEmitFn(data){
+            let paramsObj={
+                selAgentId:data,
+                userId:localStorage.getItem("userid"),
+                userName:JSON.parse(localStorage.getItem("userLoginInfo")).username,
+                agentId: localStorage.getItem("agentid"),
+            };
+            try {
+                const data = await this.$axios.post(
+                "/fr/MyAgent/agentPercentCard",
+                this._qs.stringify(paramsObj),
+                );
+                if(data.errcode==0){
+                    this.tableData=data.data.data
+                }else{
+                    this.$message.error(data.errmsg);
+                }
+                
+            } catch (err) {
+                console.log(err);
+                this.$message.error("服务器异常，请稍后再试！");
+            }
+        },
+        //修改提成
+        editPercent(data) {
+            this.formTitle = "修改提成设定";
+            this.$store.commit("dialogVisible/dialogVisibleMutations", true);
+            this.otherInfo = "1";
+            let formOtherInfo = {
+                agentId: localStorage.getItem("agentid"),
+                userId: localStorage.getItem("userid"),
+                userName: JSON.parse(localStorage.getItem("userLoginInfo")).username
+            };
+
+            this.diaForm ={
+                ...formOtherInfo,
+                cardTypeId:data.id,
+                selAgentId:data.agentid,
+                topAgentAmt:data.toppercentageamt,
+                PercentAmt:this.diaForm.PercentAmt || data.percentAgeamt,
+            }
+            this.diaForm2 ={
+                pkName:data.typeName,
+                pkData:data.countData,
+                pkMonth:data.validMonth,
+                pkMoney:data.countMoney,
+            }
+
+        },
+
+    },
+    directives: {
+    }
+}
 </script>
 
 <style scoped>
-  .titletableBox{
-    height:40px;
-    background-color: rgba(24, 144, 255, 1);
-    color: #ffffff;
-    line-height: 40px;
-    text-align: center;
-  }
-  .TransferBox{
-    display: flex;
-  }
-  .SourceBox{
-    width: 400px;
-  }
-  .buttonCentenr{
-    position: relative;
-    width: 150px;
-  }
-  .posiBox{
-    position: absolute;
-    top: 100px;
-    left: 50px;
-  }
-  .posiBox p{
-    margin-top: 50px;
-  }
-  .TargetBox{
-    width: 400px;
-  }
-  #reduce_settings{
-    height: 100%;
-  }
-  .markingInfobox{
-    background-color: #ffffff;
-    position: fixed;
-    top: 90px;
-    left: 180px;
-    bottom: 80px;
-    right: 10px;
-    overflow-y: auto;
-    padding: 30px 50px;
-  }
-  .titleP{
-    position: relative;
-  }
-  .titleinfoP{
-    height:20px;
-    line-height: 20px;
-    margin-right: 5px;
-    color:rgba(21,168,253,1);
-    font-size: 18px;
-    display: inline-block;
-  }
-  .bluespan{
-    display: inline-block;
-    width:3px;
-    height:20px;
-    background:rgba(21,168,253,1);
-    position: absolute;
-  }
-  .formBox p{
-    margin-top: 25px;
-    font-size: 16px;
-    color: #333333;
-  }
-  .submitmarking{
-    margin-top: 40px;
-  }
-  .redspan{
-    color: red;
-    display: inline-block;
-    width: 20px;
-    text-align: center;
-  }
-  .timecenter{
-    font-size: 14px;
-    display: inline-block;
-    width: 20px;
-    text-align: center;
-  }
 
-  #reduce_settings .formBox .el-input__inner{
-    background-color:rgba(245,247,253,1)!important;
-  }
 </style>

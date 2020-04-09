@@ -55,7 +55,7 @@
       <el-row>
         <el-col :span="8" :offset="10">
           <el-form-item>
-            <el-button type="primary" @click="searchformFn('/fr/MyAgent/managerSearch')">搜索</el-button>
+            <el-button type="primary" @click="searchformFn('/fr/MyAgent/myAgentSearch')">搜索</el-button>
             <el-button @click="resetForm1()">重置</el-button>
           </el-form-item>
         </el-col>
@@ -67,7 +67,7 @@
           type="primary"
           size="mini"
           class="fr"
-          @click="searchformFn('/fr/MyAgent/downloadManagerSearch')"
+          @click="searchformFn('/fr/MyAgent/downLoadAgent')"
         >导出代理商</el-button>
       </div>
     </el-form>
@@ -86,7 +86,7 @@
       <el-table-column align="center" prop="bankcardno" label="银行卡号" width="160"></el-table-column>
       <el-table-column align="center" prop="agentprov" label="省份" width="80"></el-table-column>
       <el-table-column align="center" prop="agentciity" label="城市" width="80"></el-table-column>
-      <el-table-column align="center" prop="agentaddress" label="详细地址"></el-table-column>
+      <el-table-column align="center" prop="agentaddress" label="详细地址" width="200"></el-table-column>
       <el-table-column align="center" prop="agenttel" label="联系电话" width="120"></el-table-column>
       <el-table-column align="center" prop="agentmobile" label="手机号" width="120"></el-table-column>
       <el-table-column align="center" prop="agentlinkmang" label="联系人" width="80"></el-table-column>
@@ -474,6 +474,7 @@ export default {
       let paramsObj = {
         userName: JSON.parse(localStorage.getItem("userLoginInfo")).username,
         userId: localStorage.getItem("userid"),
+        userType: localStorage.getItem("usertype"),
         agentId: localStorage.getItem("agentid")
       };
       paramsObj = { ...paramsObj, ...this.form };
@@ -481,8 +482,8 @@ export default {
       try {
         let data = await this.$axios.post(url, this._qs.stringify(paramsObj));
         if (data.errcode == 0) {
-          if (url.includes("managerSearch")) {
-            this.tableData=data.data.data;
+          if (url.includes("myAgentSearch")) {
+            this.tableData=data.lst.data;
             // let arr=[];
             //   for(let i=0;i<data.lst.data.length;i++){
             //     let data2 = await this.$axios.post(`/fr/MyAgent/getCardCount`, this._qs.stringify({id:data.lst.data[i].id}));
@@ -491,7 +492,7 @@ export default {
             //   }
             //   this.tableData =arr;
           }
-          if (url.includes("downloadManagerSearch")) {
+          if (url.includes("downLoadAgent")) {
             window.location.href = data.downUrl;
           }
         } else {

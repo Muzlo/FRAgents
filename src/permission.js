@@ -43,7 +43,6 @@ router.beforeEach(async (to, from, next) => {
                                 {
                                     name: 'agentsQuery',
                                     text: '代理商查询',
-                                    
                                 },
                             ],
                         },
@@ -52,7 +51,7 @@ router.beforeEach(async (to, from, next) => {
                             children:[
                                 {
                                     name: 'myAccount',
-                                    text: '代理商查询',
+                                    text: '我的账户',
                                     
                                 },
                                 {
@@ -88,7 +87,15 @@ router.beforeEach(async (to, from, next) => {
                                 {
                                     name: 'JkReconciliation',
                                     text: '接口对账',
-                                    hidden:true
+                                   
+                                },
+                                {
+                                    name: 'preCutLst',
+                                    text: '扣款记录',
+                                },
+                                {
+                                    name: 'prePayLst',
+                                    text: '充值记录',
                                 },
                             ]
                         },
@@ -132,10 +139,10 @@ router.beforeEach(async (to, from, next) => {
                                     name: 'recoveryAgentCard',
                                     text: '回收代理商卡',
                                 },
-                                {
-                                    name: 'cardChange',
-                                    text: '卡号更换',
-                                },
+                                // {
+                                //     name: 'cardChange',
+                                //     text: '卡号更换',
+                                // },
                             ]
                         },
                         {
@@ -148,6 +155,15 @@ router.beforeEach(async (to, from, next) => {
                                 {
                                     name: 'acceptMsg',
                                     text: '查收消息',
+                                }
+                            ]
+                        },
+                        {
+                            text: '任务管理',
+                            children:[
+                                {
+                                    name: 'taskList',
+                                    text: '任务列表',
                                 }
                             ]
                         }
@@ -173,6 +189,9 @@ router.beforeEach(async (to, from, next) => {
                                     break;
                                 case "消息管理":
                                     item.icon="el-icon-s-promotion"
+                                    break;
+                                case "任务管理":
+                                    item.icon="el-icon-setting"
                                     break;
                             }
 

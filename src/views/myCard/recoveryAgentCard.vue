@@ -196,10 +196,14 @@ export default {
             try {
                 const data = await this.$axios.post(
                 "/fr/AllUSIM/myAgent",
-                this._qs.stringify({agentId: localStorage.getItem("agentid")}),
+                this._qs.stringify({
+                    agentId: localStorage.getItem("agentid"),
+                    userId:localStorage.getItem("userid"),
+                    username:JSON.parse(localStorage.getItem("userLoginInfo")).username
+                }),
                 );
                 if(data.errcode==0){
-                    this.agentsList=data.data;
+                    this.agentsList=data.data.data;
                 }else{
                     this.$message.error(data.errmsg);
                 }
@@ -225,9 +229,13 @@ export default {
           if(this.formAllInfo2.agentsList){
             let fileObj = param.file // 相当于input里取得的files
             let fd = new window.FormData()// FormData 对象
-            fd.append('files', fileObj)// 文件对象
-            fd.append('flowPoolId', this.flowPoolId)// 文件对象
-            let url = `${baseURL.ip1}/`;
+            fd.append('file', fileObj)// 文件对象
+            fd.append('agentId', localStorage.getItem("agentid"))// 文件对象
+            fd.append('hidSelAgent',this.formAllInfo2.agentsList)// 文件对象
+            fd.append('userid', localStorage.getItem("userid"))// 文件对象
+            fd.append('username', JSON.parse(localStorage.getItem("userLoginInfo")).username)// 文件对象
+            fd.append('usertype', localStorage.getItem("usertype"))
+            let url = `${baseURL.ip1}/REUSIM/doReFileUpload`;
             var options = {
                 url: url,
                 data: fd,
@@ -237,7 +245,7 @@ export default {
                 }
             }
             this.$axios(options).then((res)=>{
-              this.$message.success(res.message);
+              this.$message.success(res.errmsg);
             }).catch((err)=>{
               this.$message.error('上传失败！');
             })

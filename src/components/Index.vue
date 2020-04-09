@@ -121,10 +121,10 @@
             <div class="main-content">
                 <div class="view-c">
                     <el-card class="box-card">
-                    <keep-alive :include="keepAliveData">
-                        <!-- 子页面 -->
-                        <router-view v-if="isShowRouter" />
-                    </keep-alive>
+                        <keep-alive :include="keepAliveData">
+                            <!-- 子页面 -->
+                            <router-view v-if="isShowRouter" />
+                        </keep-alive>
                     </el-card>
                 </div>
             </div>

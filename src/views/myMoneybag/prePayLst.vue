@@ -37,7 +37,7 @@
 
       <el-row>
         <el-col :span="4" :offset="10">
-          <el-button type="primary" @click="searchData('checkRechargeList')">查询</el-button>
+          <el-button type="primary" @click="searchData('prePayLst')">查询</el-button>
         </el-col>
       </el-row>
 
@@ -46,7 +46,7 @@
           type="primary"
           size="mini"
           class="fr"
-          @click="searchData('downLoadCheckReChargeList')"
+          @click="searchData('downLoadPrePaysLst')"
         >导出</el-button>
       </div>
 
@@ -56,25 +56,15 @@
 <el-divider>查询结果</el-divider>
 
 <el-table border :stripe="true" :data="tableList.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
-
-    <el-table-column label="卡号" fixed prop="cardnumber" width="200" align="center"></el-table-column>
-    <el-table-column label="串号" prop="cardno" width="200" align="center"></el-table-column>
-    <el-table-column label="IMSI" prop="cardimsi" width="200" align="center"></el-table-column>
-    <el-table-column label="代理商" prop="agentname" width="200" align="center"></el-table-column>
-    <el-table-column label="卡类型" prop="className" width="300" align="center"></el-table-column>
-    <el-table-column label="套餐类型" prop="pkname" width="300" align="center"></el-table-column>
-    <el-table-column label="套餐金额" prop="rechargeamt" width="100" align="center"></el-table-column>
-    <el-table-column label="提成金额" prop="percentageamt" width="100" align="center"></el-table-column>
-    <el-table-column label="充值时间" prop="processtime" width="300" align="center"></el-table-column>
-    <el-table-column label="订单号" prop="orderNo" width="300" align="center"></el-table-column>
-    
-
-    <el-table-column align="right" fixed="right" width="200">
-      <template slot="header" slot-scope="scope">
-        <el-input v-model="keySearch" size="mini" placeholder="输入卡号搜索"/>
-      </template>
-
-    </el-table-column>
+        <el-table-column label="代理商" prop="agentname" align="center"></el-table-column>
+        <el-table-column label="充值金额" prop="balance" align="center"></el-table-column>
+        <el-table-column label="充值时间" prop="createTime"  align="center"></el-table-column>
+        <el-table-column label="充值后余额" prop="currBalance" align="center"></el-table-column>
+        <el-table-column align="right" width="200">
+          <template slot="header" slot-scope="scope">
+            <el-input v-model="keySearch" size="mini" placeholder="输入代理商搜索"/>
+          </template>
+        </el-table-column>
 </el-table>
 
     <pagination
@@ -93,7 +83,7 @@
 <script>
 import pagination from "../../components/myMoneybag/pagination";
 export default {
-  name: "WxReconciliation",
+  name: "prePayLst",
   data() {
     return {
         formAllInfo:{},
@@ -118,7 +108,7 @@ export default {
       //复制一份表格数据
     tableList() {
         return this.tableData.filter(item => {
-            if (item.cardnumber.includes(this.keySearch)) {
+            if (item.agentname.includes(this.keySearch)) {
                 return item;
             }
             this.currentPage = 1;
@@ -157,38 +147,42 @@ export default {
     searchData(url){
 
         this.$refs['ruleForm'].validate( async (valid) => {
-          if (valid) {
-            let paramsObj={
-                userId:localStorage.getItem("userid"),
-                userName:JSON.parse(localStorage.getItem("userLoginInfo")).username,
-                ...this.formAllInfo
-            }
-            try {
-                const data = await this.$axios.post(
-                "/fr/Reconciliatio/"+url,
-                this._qs.stringify(paramsObj),
-                );
-                if(data.errcode==0){
-                    if(url=="checkRechargeList"){
-                        this.tableData=data.data.data;
-                    }
-                    if(url=="downLoadCheckReChargeList"){
-                        window.location.href = data.downUrl;
-                    }
-                }else{
-                    this.$message.error(data.errmsg);
+            if (valid) {
+                let paramsObj={
+                    agentId:localStorage.getItem("agentid"),
+                    userType:localStorage.getItem("usertype"),
+                    userId :localStorage.getItem("userid"),
+                    userName :JSON.parse(localStorage.getItem("userLoginInfo")).username,
+                    ...this.formAllInfo
                 }
-                
-            } catch (err) {
-                console.log(err);
-                this.$message.error("服务器异常，请稍后再试！");
+
+                try {
+                    const data = await this.$axios.post(
+                    "/fr/Reconciliatio/"+url,
+                    this._qs.stringify(paramsObj),
+                    );
+                    if(data.errcode==0){
+                        if(url=="prePayLst"){
+                            this.tableData=data.myagent.data;
+                        }
+                        if(url=="downLoadPrePaysLst"){
+                            window.location.href = data.downUrl;
+                        }
+                    }else{
+                        this.$message.error(data.errmsg);
+                    }
+                    
+                } catch (err) {
+                    console.log(err);
+                    this.$message.error("服务器异常，请稍后再试！");
+                }
+            }else {
+                return false;
             }
-
-
-          } else {
-            return false;
-          }
         });
+
+
+
         
     },
   }
