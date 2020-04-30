@@ -481,8 +481,8 @@ export default {
       try {
         let data = await this.$axios.post(url, this._qs.stringify(paramsObj));
         if (data.errcode == 0) {
-          if (url.includes("managerSearch")) {
-            this.tableData=data.data.data;
+          if (url.includes("myAgentSearch")) {
+            this.tableData=data.lst.data;
             // let arr=[];
             //   for(let i=0;i<data.lst.data.length;i++){
             //     let data2 = await this.$axios.post(`/fr/MyAgent/getCardCount`, this._qs.stringify({id:data.lst.data[i].id}));

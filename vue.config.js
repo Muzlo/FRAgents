@@ -3,7 +3,7 @@ module.exports = {
     devServer: {
         proxy: {
             '/fr': {
-                target: 'http://192.168.2.184:8099/', // 对应自己的接口
+                target: 'http://192.168.2.235:8099/', // 对应自己的接口
                 changeOrigin: true,
                 ws: true,
                 pathRewrite: {

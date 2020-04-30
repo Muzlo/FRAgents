@@ -73,7 +73,7 @@ export default {
         const data=await this.$axios.post(`${baseURL.ip1}/Login/checkLogin`,this._qs.stringify(this.form) );
         try {
             if(data.errcode==0){
-              localStorage.setItem('token', data.token);
+              localStorage.setItem('tokenFrAgent', data.token);
               localStorage.setItem('agentid', data.agentid);
               localStorage.setItem('userid', data.userid);
               localStorage.setItem('usertype', data.usertype);

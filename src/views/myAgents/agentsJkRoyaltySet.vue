@@ -5,10 +5,9 @@
             <el-row>
                 <el-col :span="8">
                     <el-form-item label="代理商">
-                        <!-- <el-select v-model="form.agentsList" filterable placeholder="请选择" @change="searchData">
+                        <el-select v-model="form.agentsList" filterable placeholder="请选择" @change="searchData">
                             <el-option :label="item.agentname" :value="item.id" v-for="item in agentsList" :key="item.id"></el-option>
-                        </el-select> -->
-                        <agentsListComponent @searchDataEmit="searchDataEmitFn"></agentsListComponent>
+                        </el-select>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -89,7 +88,6 @@
 <script>
 import pagination from "../../components/myCard/pagination";
 import publicForm from "../../components/myCard/publicForm";
-import agentsListComponent from "../../components/agents/agentsList";
 export default {
     name: 'agentsJkRoyaltySet',
     data() {
@@ -114,9 +112,9 @@ export default {
         }
     },
     created(){
-       // this.getMyAgentFn();
+        this.getMyAgentFn();
     },
-    components: { pagination,publicForm,agentsListComponent},
+    components: { pagination,publicForm},
     computed: {
         //复制一份表格数据
         tableList() {
@@ -147,9 +145,26 @@ export default {
         handleCurrentChange(data) {
             this.currentPage = data;
         },
-        async searchDataEmitFn(data){
+        async getMyAgentFn(){
+            try {
+                const data = await this.$axios.post(
+                "/fr/AllUSIM/myAgent",
+                this._qs.stringify({agentId: localStorage.getItem("agentid")}),
+                );
+                if(data.errcode==0){
+                    this.agentsList=data.data;
+                }else{
+                    this.$message.error(data.errmsg);
+                }
+                
+            } catch (err) {
+                console.log(err);
+                this.$message.error("服务器异常，请稍后再试！");
+            }
+        },
+        async searchData(){
             let paramsObj={
-                selAgentId:data,
+                selAgentId:this.form.agentsList,
                 userId:localStorage.getItem("userid"),
                 userName:JSON.parse(localStorage.getItem("userLoginInfo")).username,
                 agentId: localStorage.getItem("agentid"),
@@ -172,6 +187,7 @@ export default {
         },
         //修改提成
         editPercent(data) {
+          console.log(data);
             this.formTitle = "修改提成设定";
             this.$store.commit("dialogVisible/dialogVisibleMutations", true);
             this.otherInfo = "1";

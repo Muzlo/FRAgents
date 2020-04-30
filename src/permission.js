@@ -6,7 +6,7 @@ import { getDocumentTitle, resetTokenAndClearUser } from './utils'
 let hasMenus = false
 router.beforeEach(async (to, from, next) => {
     document.title = getDocumentTitle(to.meta.title)
-    if (localStorage.getItem('token')) {
+    if (localStorage.getItem('tokenFrAgent')) {
             if (to.path === '/login') {
                 next({ path: '/' })
             } else if (hasMenus) {
