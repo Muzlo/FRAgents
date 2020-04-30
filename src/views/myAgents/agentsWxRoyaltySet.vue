@@ -5,7 +5,13 @@
             <el-row>
                 <el-col :span="8">
                     <el-form-item label="代理商">
+<<<<<<< HEAD
                         <agentsListComponent @searchDataEmit="searchDataEmitFn"></agentsListComponent>
+=======
+                        <el-select v-model="form.agentsList" filterable placeholder="请选择" @change="searchData">
+                            <el-option :label="item.agentname" :value="item.id" v-for="item in agentsList" :key="item.id"></el-option>
+                        </el-select>
+>>>>>>> 24ae6c0fddc4ac1ed50dd84e437ae9788bdebdac
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -85,7 +91,10 @@
 <script>
 import pagination from "../../components/myCard/pagination";
 import publicForm from "../../components/myCard/publicForm";
+<<<<<<< HEAD
 import agentsListComponent from "../../components/agents/agentsList";
+=======
+>>>>>>> 24ae6c0fddc4ac1ed50dd84e437ae9788bdebdac
 export default {
     name: 'agentsWxRoyaltySet',
     data() {
@@ -109,8 +118,10 @@ export default {
             }
         }
     },
-    created(){},
-    components: { pagination,publicForm,agentsListComponent},
+    created(){
+        this.getMyAgentFn();
+    },
+    components: { pagination,publicForm},
     computed: {
         //复制一份表格数据
         tableList() {
@@ -140,6 +151,49 @@ export default {
         },
         handleCurrentChange(data) {
             this.currentPage = data;
+        },
+        async getMyAgentFn(){
+            try {
+                const data = await this.$axios.post(
+                "/fr/AllUSIM/myAgent",
+                this._qs.stringify({agentId: localStorage.getItem("agentid")}),
+                );
+                if(data.errcode==0){
+                    this.agentsList=data.data;
+                }else{
+                    this.$message.error(data.errmsg);
+                }
+                
+            } catch (err) {
+                console.log(err);
+                this.$message.error("服务器异常，请稍后再试！");
+            }
+        },
+        async searchData(){
+            let paramsObj={
+                selAgentId:this.form.agentsList,
+                userId:localStorage.getItem("userid"),
+                userName :JSON.parse(localStorage.getItem("userLoginInfo")).username
+            };
+            try {
+                const data = await this.$axios.post(
+                "/fr/MyAgent/agentPercent",
+                this._qs.stringify(paramsObj),
+                );
+                if(data.errcode==0){
+                    this.tableData=data.data.data
+                }else{
+                    this.$message.error(data.errmsg);
+                }
+                
+            } catch (err) {
+                console.log(err);
+                this.$message.error("服务器异常，请稍后再试！");
+            }
+<<<<<<< HEAD
+
+        }
+=======
         },
         //修改提成
         editPercent(data) {
@@ -173,31 +227,7 @@ export default {
             }
 
         },
-
-        async searchDataEmitFn(data){
-            let paramsObj={
-                selAgentId:data,
-                userId:localStorage.getItem("userid"),
-                userName :JSON.parse(localStorage.getItem("userLoginInfo")).username,
-                agentId:localStorage.getItem("agentid")
-            };
-            try {
-                const data = await this.$axios.post(
-                "/fr/MyAgent/agentPercent",
-                this._qs.stringify(paramsObj),
-                );
-                if(data.errcode==0){
-                    this.tableData=data.data.data
-                }else{
-                    this.$message.error(data.errmsg);
-                }
-                
-            } catch (err) {
-                console.log(err);
-                this.$message.error("服务器异常，请稍后再试！");
-            }
-
-        }
+>>>>>>> 24ae6c0fddc4ac1ed50dd84e437ae9788bdebdac
 
     },
     directives: {
