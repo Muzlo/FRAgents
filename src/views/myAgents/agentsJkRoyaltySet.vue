@@ -88,6 +88,7 @@
 <script>
 import pagination from "../../components/myCard/pagination";
 import publicForm from "../../components/myCard/publicForm";
+import agentsListComponent from "../../components/agents/agentsList";
 export default {
     name: 'agentsJkRoyaltySet',
     data() {
@@ -187,7 +188,6 @@ export default {
         },
         //修改提成
         editPercent(data) {
-          console.log(data);
             this.formTitle = "修改提成设定";
             this.$store.commit("dialogVisible/dialogVisibleMutations", true);
             this.otherInfo = "1";

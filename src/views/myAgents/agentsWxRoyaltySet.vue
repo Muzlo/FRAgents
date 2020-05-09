@@ -5,9 +5,11 @@
             <el-row>
                 <el-col :span="8">
                     <el-form-item label="代理商">
+
                         <el-select v-model="form.agentsList" filterable placeholder="请选择" @change="searchData">
                             <el-option :label="item.agentname" :value="item.id" v-for="item in agentsList" :key="item.id"></el-option>
                         </el-select>
+
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -87,6 +89,8 @@
 <script>
 import pagination from "../../components/myCard/pagination";
 import publicForm from "../../components/myCard/publicForm";
+
+import agentsListComponent from "../../components/agents/agentsList";
 export default {
     name: 'agentsWxRoyaltySet',
     data() {
